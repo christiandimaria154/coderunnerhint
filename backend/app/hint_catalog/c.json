@@ -1,0 +1,217 @@
+{
+  "c_undeclared_identifier": {
+    "hint_type": "compile_symbol",
+    "variants": {
+      "v1": {
+        "1": "Controlla i nomi: almeno un identificatore usato nel codice non risulta dichiarato nel punto in cui lo usi.",
+        "2": "Verifica se c'è un typo nel nome della variabile/funzione oppure se la dichiarazione è dentro un blocco diverso (scope).",
+        "3": "Mini-check: cerca l'identificatore evidenziato nel messaggio e confronta lettera per lettera con la dichiarazione (maiuscole/minuscole contano)."
+      },
+      "v2": {
+        "1": "Hai un uso di variabile/funzione prima della sua dichiarazione (o con nome diverso).",
+        "2": "In C, lo scope del blocco conta: una variabile dichiarata dentro `{ ... }` non è visibile fuori.",
+        "3": "Prova a fare una scansione rapida: dichiarazione → primo utilizzo. Se il primo utilizzo viene prima, sposta la dichiarazione o correggi il nome."
+      }
+    }
+  },
+  "c_type_mismatch": {
+    "hint_type": "types",
+    "variants": {
+      "v1": {
+        "1": "C'è un tipo non coerente tra ciò che fornisci e ciò che il compilatore si aspetta.",
+        "2": "Controlla assegnazioni/return/parametri: stai passando un valore dove serve un puntatore (o viceversa)?",
+        "3": "Micro-check: confronta le firme (tipo ritorno + parametri) e verifica se usi `*` / `&` nel punto giusto."
+      },
+      "v2": {
+        "1": "Errore di compatibilità di tipo: il compilatore segnala una combinazione non valida.",
+        "2": "Guarda il messaggio vicino a `int`, `char`, `float` o `... *`: spesso il mismatch nasce da una dereferenziazione/indirizzo sbagliato.",
+        "3": "Se il problema è su una chiamata funzione, riscrivi su carta: parametro 1 atteso vs parametro 1 passato, e così via."
+      }
+    }
+  },
+  "c_parameter_mismatch": {
+    "hint_type": "signature",
+    "variants": {
+      "v1": {
+        "1": "La chiamata a funzione non coincide con la firma attesa (numero o tipo dei parametri).",
+        "2": "Controlla quanti argomenti passi e in che ordine. In C l'ordine dei parametri è fondamentale.",
+        "3": "Confronta prototipo e chiamata: `f(a,b,c)` deve rispettare quantità, tipo e ordine dei parametri."
+      }
+    }
+  },
+  "c_prototype_conflict": {
+    "hint_type": "prototype",
+    "variants": {
+      "v1": {
+        "1": "Il prototipo e la definizione della funzione sembrano diversi.",
+        "2": "In C prototipo e definizione devono coincidere: tipo di ritorno + tipi/ordine dei parametri.",
+        "3": "Apri due righe vicine (prototipo e definizione) e confrontale token per token: basta una differenza per creare conflitto."
+      }
+    }
+  },
+  "c_return_type_mismatch": {
+    "hint_type": "return_type",
+    "variants": {
+      "v1": {
+        "1": "C'è un problema nel tipo restituito dalla funzione.",
+        "2": "Controlla il tipo dichiarato nella funzione e il valore che stai restituendo con `return`.",
+        "3": "Se la funzione restituisce un puntatore, verifica di non restituire un valore semplice (o viceversa)."
+      }
+    }
+  },
+  "c_pointer_deref_misuse": {
+    "hint_type": "pointers",
+    "variants": {
+      "v1": {
+        "1": "Probabile uso scorretto di `*` o `&` in un'espressione con puntatori.",
+        "2": "Chiediti: in quel punto mi serve l'indirizzo (`&x`) o il contenuto puntato (`*p`)?",
+        "3": "Mini-regola: `&` ottiene indirizzo, `*` dereferenzia. Controlla il tipo dell'espressione prima e dopo l'operatore."
+      }
+    }
+  },
+  "c_segfault": {
+    "hint_type": "runtime_memory",
+    "variants": {
+      "v1": {
+        "1": "C'è un accesso a memoria non valido (segmentation fault). Concentrati su puntatori e indici array.",
+        "2": "Controlla se dereferenzi un puntatore non inizializzato/NULL oppure se un indice esce dai limiti dell'array.",
+        "3": "Strategia rapida: verifica nell'ordine inizializzazione puntatori, allocazione, limiti dei cicli, e uso dopo `free`."
+      },
+      "v2": {
+        "1": "Runtime crash: il programma tocca memoria che non dovrebbe.",
+        "2": "Guarda i cicli che scrivono/leggono array (`i < n` vs `i <= n`) e i puntatori passati alle funzioni.",
+        "3": "Se usi `malloc`, verifica: allocazione riuscita, dimensione corretta, accessi entro il buffer e `free` solo alla fine."
+      }
+    }
+  },
+  "c_invalid_free": {
+    "hint_type": "memory",
+    "variants": {
+      "v1": {
+        "1": "Errore su `free`: stai liberando un puntatore non valido.",
+        "2": "`free` va usata solo su puntatori ottenuti da `malloc/calloc/realloc` (e non già liberati).",
+        "3": "Controlla se fai `free` su: variabile locale, puntatore spostato (`p+1`), o puntatore già liberato."
+      }
+    }
+  },
+  "c_double_free": {
+    "hint_type": "memory",
+    "variants": {
+      "v1": {
+        "1": "Stai liberando due volte la stessa area di memoria.",
+        "2": "Dopo `free(p)`, evita di rifare `free(p)` senza una nuova allocazione. Può aiutare impostare `p = NULL`.",
+        "3": "Segui il ciclo di vita del puntatore: allocazione → uso → una sola `free`."
+      }
+    }
+  },
+  "c_use_after_free": {
+    "hint_type": "memory",
+    "variants": {
+      "v1": {
+        "1": "Stai usando memoria dopo averla liberata (`use-after-free`).",
+        "2": "Controlla se accedi a `*p` o `p[i]` dopo una `free(p)` (anche indirettamente in una funzione).",
+        "3": "Riorganizza il flusso: tutti gli accessi prima della `free`, poi eventualmente imposta il puntatore a `NULL`."
+      }
+    }
+  },
+  "c_out_of_bounds": {
+    "hint_type": "bounds",
+    "variants": {
+      "v1": {
+        "1": "Probabile accesso fuori dai limiti di un array/buffer.",
+        "2": "Controlla soprattutto la condizione finale dei cicli e gli indici `i`, `j` nei casi limite.",
+        "3": "Con array di dimensione `n`, gli indici validi sono da `0` a `n-1`: verifica dove tocchi `n` o valori negativi."
+      }
+    }
+  },
+  "c_null_dereference": {
+    "hint_type": "pointers",
+    "variants": {
+      "v1": {
+        "1": "Stai dereferenziando un puntatore NULL o non valido.",
+        "2": "Controlla se il puntatore viene inizializzato/assegnato prima dell'uso e se c'è una verifica `p == NULL` dove serve.",
+        "3": "Se il puntatore viene da `malloc`, verifica l'esito dell'allocazione prima di usare `*p` o `p[i]`."
+      }
+    }
+  },
+  "c_logic_edge_case_empty": {
+    "hint_type": "edge_case",
+    "variants": {
+      "v1": {
+        "1": "I test che falliscono sembrano collegati al caso limite con input vuoto / `n = 0`.",
+        "2": "Chiediti cosa fa il codice quando non ci sono elementi: entra nei cicli? accede a `a[0]`?",
+        "3": "Prova a simulare a mano il caso `n = 0` e controlla ogni accesso ad array e ogni `return`."
+      }
+    }
+  },
+  "c_logic_edge_case_single": {
+    "hint_type": "edge_case",
+    "variants": {
+      "v1": {
+        "1": "Probabile problema sul caso con un solo elemento.",
+        "2": "Verifica condizioni e cicli quando `n = 1`: alcuni algoritmi usano limiti che saltano o vanno oltre.",
+        "3": "Simula il caso minimo non vuoto (`n = 1`) e controlla se usi `a[1]` o fai un confronto non valido."
+      }
+    }
+  },
+  "c_output_format": {
+    "hint_type": "output_format",
+    "variants": {
+      "v1": {
+        "1": "La logica può essere quasi corretta, ma il formato dell'output non coincide.",
+        "2": "Controlla spazi, newline (`\n`), testo extra e ordine di stampa dei valori.",
+        "3": "Confronta l'output atteso con il tuo carattere per carattere (specie ultimo spazio/newline)."
+      }
+    }
+  },
+  "c_logic_bounds_off_by_one": {
+    "hint_type": "bounds",
+    "variants": {
+      "v1": {
+        "1": "Sospetto errore di limite nel ciclo (off-by-one).",
+        "2": "Rivedi condizioni come `<` vs `<=` e l'ultimo indice utilizzato.",
+        "3": "Annota gli indici visitati dal ciclo per un esempio piccolo (es. `n = 3`) e verifica se tocchi `3` invece di `2`."
+      }
+    }
+  },
+  "c_logic_loop_bounds_generic": {
+    "hint_type": "logic_loop",
+    "variants": {
+      "v1": {
+        "1": "I test falliti fanno pensare a un problema nella logica del ciclo o nei limiti di iterazione.",
+        "2": "Controlla inizializzazione indice, condizione di uscita e aggiornamento dell'indice nel ciclo principale.",
+        "3": "Prova con un input piccolo e traccia a mano gli indici/variabili ad ogni iterazione."
+      }
+    }
+  },
+  "c_logic_generic_failed_tests": {
+    "hint_type": "logic_generic",
+    "variants": {
+      "v1": {
+        "1": "Il programma compila ma alcuni test falliscono: concentrati sui casi limite e sulla logica, non sulla sintassi.",
+        "2": "Controlla precondizioni, valori iniziali e cosa succede ai casi particolari (vuoto, uno, ultimo elemento).",
+        "3": "Riesegui mentalmente il flusso con un esempio piccolo e confronta il comportamento atteso passo per passo."
+      }
+    }
+  },
+  "c_warning_unused_variable": {
+    "hint_type": "warning_unused",
+    "variants": {
+      "v1": {
+        "1": "Il compilatore segnala una variabile non usata. Non sempre blocca, ma può indicare una logica incompleta.",
+        "2": "Controlla se hai dichiarato una variabile che doveva essere usata in un calcolo/condizione e poi è stata dimenticata.",
+        "3": "Se è davvero inutile, rimuovila; se doveva servire, reinseriscila nel punto giusto del ragionamento."
+      }
+    }
+  },
+  "c_no_hint_needed": {
+    "hint_type": "none",
+    "variants": {
+      "v1": {
+        "1": "Nessun indizio necessario: sembra tutto corretto o non ho abbastanza segnali utili.",
+        "2": "Nessun indizio aggiuntivo al momento.",
+        "3": "Nessun indizio aggiuntivo al momento."
+      }
+    }
+  }
+}
